@@ -1,6 +1,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io('http://localhost:8888');
+  var socket = io('http://localhost');
   socket.on('connect', function(){ console.log('connected'); });
   socket.on('event', function(data){ console.log('event ' + data); });
   socket.on('news', function (data) {
@@ -9,8 +9,11 @@
   });
   socket.on('response-news', function (data) {
     console.log('get `response-news` event (broadcast) '+ data);
+    document.getElementById("p1").innerHTML = data;
    // socket.emit('my other event', { message: 'emit event from client' });
   });
+  socket.on('clock', function(data){ document.getElementById("p2").innerHTML = data.curDate; });
   socket.on('disconnect', function(){ console.log('disconnected'); });
 </script>
-<p>test</p>
+<p id="p1">test</p>
+Clock: <p id="p2"></p>

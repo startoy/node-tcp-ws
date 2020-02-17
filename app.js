@@ -6,11 +6,11 @@ app.listen(80);
 
 function handler (req, res) {
     // Send HTML headers and message
-    console.log('client connected(handler) ->' + req.url);
+    /* console.log('client connected(handler) ->' + req.url);
 	res.writeHead(200,{ 'Content-Type': 'text/html' }); 
     res.end('<h1>Hello Socket Lover!</h1>');
-    
-  /* fs.readFile(__dirname + '/index.html',
+     */
+  fs.readFile(__dirname + '/index.html',
   function (err, data) {
     if (err) {
       res.writeHead(500);
@@ -19,7 +19,7 @@ function handler (req, res) {
     console.log('sent html!');
     res.writeHead(200);
     res.end(data);
-  }); */
+  });
 }
 
 io.on('connection', function (socket) {
@@ -36,4 +36,9 @@ io.on('connection', function (socket) {
     let resData = { message: 'you sent \'' + data + '\' to event'}
     socket.emit('response-news', resData);
   });
+
+  setInterval(()=> {
+      let curDate = new Date();
+      socket.emit('clock', {curDate:curDate});
+  }, 1000);
 });
