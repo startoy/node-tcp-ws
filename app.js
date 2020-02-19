@@ -2,6 +2,15 @@ var app = require('http').createServer(handler)
 var io = require('socket.io')(app);
 var fs = require('fs');
 
+  /* 
+  * TODO: dev with ES6 like React ? 
+  * TODO: use Logger - logging app
+  * TODO: use GRPC to java - design protobuf ?
+  * TODO: use Socket - import socket.js
+  *       - find best pattern for support both Socket and API-based
+  *       - implement socket/controller.js for each event
+  */
+
 app.listen(80);
 
 function handler (req, res) {
@@ -23,7 +32,7 @@ function handler (req, res) {
 }
 
 io.on('connection', function (socket) {
-    console.log('client connected');
+  console.log('client connected');
   socket.emit('news', { hello: 'world' });
   socket.on('request-news', (data) => {
     console.log('[Recv] ' + data);
@@ -37,6 +46,9 @@ io.on('connection', function (socket) {
     socket.emit('response-news', resData);
   });
 
+  /* 
+   * send server datetime repeatly to client
+   */
   setInterval(()=> {
       let curDate = new Date();
       socket.emit('clock', {curDate:curDate});
