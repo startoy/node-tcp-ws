@@ -1,19 +1,38 @@
-<script src="/socket.io/socket.io.js"></script>
+<!doctype html>
+<html>
+  <head>
+    <title>Test Chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-  var socket = io('http://localhost');
-  socket.on('connect', function(){ console.log('connected'); });
-  socket.on('event', function(data){ console.log('event ' + data); });
-  socket.on('news', function (data) {
-    console.log(data);
-   // socket.emit('my other event', { message: 'emit event from client' });
+  $(function () {
+    var socket = io();
+    $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });
+    socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
   });
-  socket.on('response-news', function (data) {
-    console.log('get `response-news` event (broadcast) '+ data);
-    document.getElementById("p1").innerHTML = data;
-   // socket.emit('my other event', { message: 'emit event from client' });
-  });
-  socket.on('clock', function(data){ document.getElementById("p2").innerHTML = data.curDate; });
-  socket.on('disconnect', function(){ console.log('disconnected'); });
 </script>
-<p id="p1">test</p>
-Clock: <p id="p2"></p>
+  </body>
+</html>

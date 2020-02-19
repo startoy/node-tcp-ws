@@ -1,56 +1,27 @@
-var app = require('http').createServer(handler)
-var io = require('socket.io')(app);
-var fs = require('fs');
+const app = require('express')();
+const http = require('http').createServer(app)  // #1
+const io = require('socket.io')(http); // #2
+const fs = require('fs');
 
-  /* 
-  * TODO: dev with ES6 like React ? 
-  * TODO: use Logger - logging app
-  * TODO: use GRPC to java - design protobuf ?
-  * TODO: use Socket - import socket.js
-  *       - find best pattern for support both Socket and API-based
-  *       - implement socket/controller.js for each event
-  */
-
-app.listen(80);
-
-function handler (req, res) {
-    // Send HTML headers and message
-    /* console.log('client connected(handler) ->' + req.url);
-	res.writeHead(200,{ 'Content-Type': 'text/html' }); 
-    res.end('<h1>Hello Socket Lover!</h1>');
-     */
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-    console.log('sent html!');
-    res.writeHead(200);
-    res.end(data);
-  });
-}
-
-io.on('connection', function (socket) {
-  console.log('client connected');
-  socket.emit('news', { hello: 'world' });
-  socket.on('request-news', (data) => {
-    console.log('[Recv] ' + data);
-    let resData = { message: 'you sent \'' + data + '\' to request-news'}
-    console.log('Broadcasting..');
-    io.emit('response-news', resData);
-  });
-  socket.on('event', (data) => {
-    console.log('[Recv] ' + data);
-    let resData = { message: 'you sent \'' + data + '\' to event'}
-    socket.emit('response-news', resData);
-  });
-
-  /* 
-   * send server datetime repeatly to client
-   */
-  setInterval(()=> {
-      let curDate = new Date();
-      socket.emit('clock', {curDate:curDate});
-  }, 1000);
+app.get('/', function (req, res){
+  // res.send('<h1>Hello World</h1>');
+  res.sendFile(__dirname + '/index.html');
 });
+
+io.on('connection', function(socket){
+  console.log('someone has connected');
+
+  socket.on('chat message', (msg)=>{
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+  })
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  })
+});
+
+http.listen(3000, ()=>{
+  console.log("Server's listening on *:3000");
+});
+
