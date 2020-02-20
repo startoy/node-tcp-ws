@@ -1,27 +1,45 @@
+/* Main required module */
 const app = require('express')();
-const http = require('http').createServer(app)  // #1
-const io = require('socket.io')(http); // #2
+
 const fs = require('fs');
+const createError = require('http-errors');
+
+  /* 
+  *   SETUP
+  */
 
 app.get('/', function (req, res){
-  // res.send('<h1>Hello World</h1>');
-  res.sendFile(__dirname + '/index.html');
-});
-
-io.on('connection', function(socket){
-  console.log('someone has connected');
-
-  socket.on('chat message', (msg)=>{
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
-  })
-
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
+  //  res.send('<h1>Hello World</h1>');
+  //  res.sendFile(__dirname + '/index.html');
+  fs.readFile(__dirname + '/index.html', (err, data)=>{
+    if (err) {
+      res.writeHead(500);
+      return res.end('ERROR: loading index.html ' + err);
+    }
+    res.writeHead(200);
+    res.end(data);
   })
 });
 
-http.listen(3000, ()=>{
-  console.log("Server's listening on *:3000");
+app.get('/test', (req, res) => {
+  console.log('Enter /test');
+  res.send('Sent from Nodejs');
 });
 
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
