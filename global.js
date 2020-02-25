@@ -4,6 +4,9 @@
 
 var global = {};
 
+/* 
+ *  Declare event name (easily for later change)
+ */
 var event = {
     ioInit: 'init client',
     ioDynamic: 'market update',
