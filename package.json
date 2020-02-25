@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "nodemon ./bin/www",
+    "start-tcp-server": "nodemon test/tcp.server.js",
+    "start-tcp-client": "node test/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -14,28 +14,38 @@
     </style>
   </head>
   <body>
+    <button id="init" onclick="init()">Init</button>
     <ul id="messages"></ul>
     <form action="">
       <div>
       <label for="a">Authors</label>
-      <input id="a" name="a" autocomplete="off" size="1"/>
+      <input id="a" name="a" autocomplete="off"/>
       <input id="m" autocomplete="off" /><button>Send</button>
       </div>
     </form>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
+  var socket = io();
+  function init() {
+    console.log('init!');
+    socket.emit('init client', 'I');
+  };
   $(function () {
-    var socket = io();
     $('form').submit(function(e){
       e.preventDefault(); // prevents page reloading
       socket.emit('chat message', $('#a').val() + ' said ' + $('#m').val());
+      
       $('#m').val('');
       return false;
     });
     socket.on('chat message', function(msg){
       var author = $('#a').val();
       // console.log(author);
+      $('#messages').append($('<li>').text(msg));
+    });
+    socket.on('init client', function(msg){
+      console.log('init recv => ' + msg);
       $('#messages').append($('<li>').text(msg));
     });
   });

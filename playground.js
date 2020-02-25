@@ -1,3 +1,7 @@
+/* ************************************
+* FOR TEST CODE
+***************************************/
+
 var bDevicesValues = ['A', 'A', '', 'A'];
 var bDevicesNames = [];
 var flag = 0;

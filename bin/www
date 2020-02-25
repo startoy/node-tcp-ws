@@ -3,7 +3,7 @@
 const app = require('../app');
 const http = require('http');
 const server = http.createServer(app);
-const websocket = require('../websocket');
+const websocket = require('../core/io.server');
 const io = websocket.io;
 io.attach(server);
 
