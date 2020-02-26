@@ -61,32 +61,51 @@ server.on('connection', function(socket) {
 	socket.on('data', (data) => {
 		let bread = socket.bytesRead;
 		let bwrite = socket.bytesWritten;
+		let byte0,byte1
+		var pc_data
 		console.log('Bytes read : ' + bread);
 		console.log('Bytes written : ' + bwrite);
-		console.log('Data sent to server : [' + data + ']');
+		/*console.log('Data sent to server : [' + data + ']');*/
+		/* recive data */
+		byte0 = dec2bin(data.charCodeAt(0))
+		byte1 = dec2bin(data.charCodeAt(1))
+		bytes = byte0 + byte1
+		bytes = parseInt(bytes, 2)
+		pc_data = data.slice(2,bytes+2)
+		console.log('Data Recive ['+bytes+']['+pc_data+']')
 
-		let stream_stop = false;
+		/* Send Data */
+		for(let i=0;i<400;i++){
+			let buf = Buffer.alloc(4096)
+			let tmp
+			data_send = "STREAM FROM SERVER" + i
+			b = dec2bin(data_send.length)
+			if (b.length < 8){
+				buf[0] = 0
+				buf[1] = parseInt(b, 2)
+			}
+			else{
+				tmp = b.length%8
+				if (tmp == 0){
+					byte0 = b.slice(0,8)
+					byte1 = b.slice(8)
+					buf[0] = parseInt(byte0, 2)
+					buf[1] = parseInt(byte1, 2)
+				}
+				else{
+					byte0 = b.slice(0,tmp)
+					byte1 = b.slice(tmp)
+					buf[0] = parseInt(byte0, 2)
+					buf[1] = parseInt(byte1, 2)
+				}
+			}
+			buf = save_array_byte(data_send,buf)
+			writeMessage(socket, buf);
 
-		// Test stream data to Nodejs tcp socket
-		if (data[0] == 'E')
-			stream_stop = true;
-
-		for(let i=0;i<50;i++)
-			writeMessage(socket, "STREAM FROM SERVER" + i);
+		}
 
 		/* Send "END" */
 		writeMessage(socket, "END");
-		
-		//echo data
-		if (stream_stop) {
-			console.log('Streaming stop..');
-			var is_kernel_buffer_full = socket.write('Data ::' + data);
-			if(is_kernel_buffer_full){
-				console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
-			}else{
-				socket.pause();	// then socket.resume(); somewhere
-			}
-		}
 	});
 	
 	/* 	socket.write('Echo server\r\n');
@@ -163,7 +182,16 @@ function onError(err) {
             throw err;
     }
 }
-
+function dec2bin(dec){
+    return (dec >>> 0).toString(2);
+}
+function save_array_byte(dec,src){
+    let i
+    for(i = 2 ; i < dec.length+2 ; i++){
+        src[i] = dec.charCodeAt(i-2)
+    }
+    return src
+}
 var s = require('../lib/tcp.lib');
 
 function writeMessage(socket, msg){
