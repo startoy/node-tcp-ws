@@ -12,8 +12,10 @@
 ## GETTING START
   1. Install dependencies
     > npm install
+
   2. Run service with
     > npm start
+
   3. on browser, access url: 
     > localhost:3000
 
