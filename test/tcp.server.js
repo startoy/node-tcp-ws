@@ -76,9 +76,9 @@ server.on('connection', function(socket) {
 
 		/* Send Data */
 		for(let i=0;i<400;i++){
-			let buf = Buffer.alloc(4096)
-			let tmp
 			data_send = "STREAM FROM SERVER" + i
+			let buf = Buffer.alloc(data_send.length+2)
+			let tmp
 			b = dec2bin(data_send.length)
 			if (b.length < 8){
 				buf[0] = 0

@@ -7,6 +7,8 @@ const websocket = require('../core/io.server');
 const io = websocket.io;
 io.attach(server);
 
+require('../core/tcp.server')(io);
+
 let log = console;
 
 let http_port = normalizePort(process.env.HTTP_PORT || '3000');
