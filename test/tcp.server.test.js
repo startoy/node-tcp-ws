@@ -4,7 +4,8 @@
 
 /* const Buffer = require('buffer'); */
 const net = require('net');
-let log = console;	/* TODO: replace console with logger */
+let log = console;
+require('../lib/console')();
 const server = net.createServer();
 
 //emitted when server closes ...not emitted until all connections closes.
@@ -61,52 +62,23 @@ server.on('connection', function(socket) {
 	socket.on('data', (data) => {
 		let bread = socket.bytesRead;
 		let bwrite = socket.bytesWritten;
-		let byte0,byte1
-		var pc_data
 		console.log('Bytes read : ' + bread);
 		console.log('Bytes written : ' + bwrite);
-		/*console.log('Data sent to server : [' + data + ']');*/
-		/* recive data */
-		byte0 = dec2bin(data.charCodeAt(0))
-		byte1 = dec2bin(data.charCodeAt(1))
-		bytes = byte0 + byte1
-		bytes = parseInt(bytes, 2)
-		pc_data = data.slice(2,bytes+2)
-		console.log('Data Recive ['+bytes+']['+pc_data+']')
 
 		/* Send Data */
-		for(let i=0;i<400;i++){
-			data_send = "STREAM FROM SERVER" + i
-			let buf = Buffer.alloc(data_send.length+2)
-			let tmp
-			b = dec2bin(data_send.length)
-			if (b.length < 8){
-				buf[0] = 0
-				buf[1] = parseInt(b, 2)
-			}
-			else{
-				tmp = b.length%8
-				if (tmp == 0){
-					byte0 = b.slice(0,8)
-					byte1 = b.slice(8)
-					buf[0] = parseInt(byte0, 2)
-					buf[1] = parseInt(byte1, 2)
-				}
-				else{
-					byte0 = b.slice(0,tmp)
-					byte1 = b.slice(tmp)
-					buf[0] = parseInt(byte0, 2)
-					buf[1] = parseInt(byte1, 2)
-				}
-			}
-			buf = save_array_byte(data_send,buf)
-			writeMessage(socket, buf);
-
+		for(let i=0;i<=100;i++){
+			str = "STREAM FROM SERVER" + i;
+			let b_len = Buffer.byteLength(str);
+			let buffer = Buffer.alloc(b_len + 2);
+			buffer.writeUInt16BE(b_len);
+			buffer.write(str, 2);
+			writeMessage(socket, buffer);
 		}
 
 		/* Send "END" */
-		writeMessage(socket, "END");
+		// writeMessage(socket, "END");
 	});
+
 	
 	/* 	socket.write('Echo server\r\n');
 		socket.pipe(socket);
@@ -182,17 +154,6 @@ function onError(err) {
             throw err;
     }
 }
-function dec2bin(dec){
-    return (dec >>> 0).toString(2);
-}
-function save_array_byte(dec,src){
-    let i
-    for(i = 2 ; i < dec.length+2 ; i++){
-        src[i] = dec.charCodeAt(i-2)
-    }
-    return src
-}
-var s = require('../lib/tcp.lib');
 
 function writeMessage(socket, msg){
 	let chunk = msg;

@@ -1,18 +1,12 @@
 /* const tcpServ = require('./tcp.server'); */
+require('../lib/console')();
 const net = require('net');
 const io = require('socket.io')();
+const tcp = require('./tcp.server')(io);
 var websocket = {};
 websocket.io = io;
 
-const util = require('../lib/tcp.lib');
 const eventName = require('../global').eventName;
-const tcpSocket = require('../core/tcp.server');
-
-var tcpConnectionString = {
-    host: '10.22.16.1',
-    port: 50000,
-    exclusive: true
-}
 
 io.on(eventName.ioConnection, (socket)=>{
     console.log('[WSOCK] client connected');
@@ -23,8 +17,14 @@ io.on(eventName.ioConnection, (socket)=>{
     });
     
     socket.on(eventName.ioChat, (msg)=>{
-        console.log('message: ' + msg);
-        sendIOMsg(io, eventName.ioChat, msg);                     /* io.emit()                sent to all io, Including self */
+        console.log('[IO RECV] ' + msg);
+        if (msg.slice(0,4) == 'SERV') {
+            let newStr = msg.slice(4);
+            tcp.write(newStr);
+        } else {
+            sendIOMsg(io, eventName.ioChat, msg);
+        }
+       
         //sendIOMsg(socket.broadcast, 'chat message', msg);     /* socket.broadcast.emit()  sent to all io. Excluding self */
     });
 

@@ -6,7 +6,6 @@ const server = http.createServer(app);
 const websocket = require('../core/io.server');
 const io = websocket.io;
 io.attach(server);
-
 require('../core/tcp.server')(io);
 
 let log = console;

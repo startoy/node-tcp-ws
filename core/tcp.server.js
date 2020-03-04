@@ -1,5 +1,6 @@
 const net = require('net');
 const util = require('../lib/tcp.lib');
+require('../lib/console');
 
 global.marketInitData = [];
 
@@ -32,22 +33,19 @@ module.exports = function(io) {
             });
         }
 
-        tcp.on('data', bytes => {
-            while (bytes.length > 0) {
-                let data = util.decodeTCP(bytes);
-                console.log('[TCP RECV] [', data, '] len(', data.length,')', bytes.length);
-
-                // Broadcast to all WebSock connection
-                //wsock.sendIOMsg(io, 'chat message', data);
-                io.emit('chat message', data);
-                
-                // Save data (prepare for new WebSock connection)
-                console.log('[TCP RECV] push data ->', data);
-                marketInitData.push(data);
-
-                bytes = bytes.slice(data.length + 2);
-
-                console.log(data.length + '==> {' + data + '} remain[' + bytes + ']')
+        tcp.on('data', b => {
+            console.log('[TCP RECV] ' + b.byteLength + '[' + b.toString() + ']')
+            let bytes = b;
+            let d = 2;                      // default number of bytes offset to read from each message
+            while(bytes.byteLength > 0) {
+                let b_len = bytes.readUInt16BE();
+                if (!b_len) break;
+                let str = bytes.slice(d, b_len + d).toString();
+                console.log('[DEBLOCK ] ' + b_len + '[' + str + ']');
+                marketInitData.push(str);
+                io.emit('chat message', str);
+                if (bytes.byteLength == b_len) break; 
+                bytes = bytes.slice(b_len + d);
             }
         });
 
@@ -58,4 +56,6 @@ module.exports = function(io) {
         tcp.on('close', ()=>{
             console.log('Connection closed');
         });
+
+    return tcp;
 }
