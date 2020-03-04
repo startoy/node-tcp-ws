@@ -35,7 +35,8 @@ module.exports = function(io) {
                 buffer.write(newStr, 2);
 
                 console.log('[TCP SEND] ', buffer, ' len[', buffer.length,']');
-                tcp.write(buffer);
+                if (buffer.length > 2)
+                    tcp.write(buffer);
             });
         }
 

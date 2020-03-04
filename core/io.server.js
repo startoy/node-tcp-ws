@@ -9,22 +9,23 @@ websocket.io = io;
 const eventName = require('../global').eventName;
 
 io.on(eventName.ioConnection, (socket)=>{
-    console.log('[WSOCK] client connected');
-    var local_tcp;
+    
+    console.log('[WebSOCK] client connected (current:' + socket.client.conn.server.clientsCount + ')');
     
     socket.on(eventName.ioDisconnect, ()=>{
-        console.log('client disconnected');
+        console.log('[WebSOCK]client disconnected (current:' + socket.client.conn.server.clientsCount + ')');
     });
     
+    var local_tcp;
     socket.on(eventName.ioChat, (msg)=>{
         console.log('[IO RECV] ' + msg);
         if (msg.slice(0,4) == 'SERV') {
             let newStr = msg.slice(10);
 
             let b_len = Buffer.byteLength(newStr);
-			let buffer = Buffer.alloc(b_len + 2);
-			buffer.writeUInt16BE(b_len);
-			buffer.write(newStr, 2);
+            let buffer = Buffer.alloc(b_len + 2);
+            buffer.writeUInt16BE(b_len);
+            buffer.write(newStr, 2);
             // writeMessage(socket, buffer);
             /* 74=A,86=MP,103=I,126=0,33=1,0= ,122=0001,22=G965B,33=0,22=0000011,0= , */
             tcp.write(buffer);
@@ -77,5 +78,9 @@ io.on(eventName.ioConnection, (socket)=>{
 function sendIOMsg(who, event, data) {
     who.emit(event, data);
 }
+
+function filterNullValues (i) {
+    return (i!=null);
+  }
 
 module.exports = websocket;

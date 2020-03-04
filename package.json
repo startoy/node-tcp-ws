@@ -7,15 +7,19 @@
     "start": "nodemon ./bin/www",
     "start-tcp-server": "nodemon test/tcp.server.test.js",
     "start-tcp-client": "node test/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "artillery run load-test/simple.yaml",
+    "testxxxx": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "socket.io": "^2.3.0"
+    "artillery": "1.6.0-29",
+    "faker": "4.1.0",
+    "nodemon": "2.0.2"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "4.17.1",
+    "socket.io": "2.3.0"
   }
 }

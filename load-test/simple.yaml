@@ -1,0 +1,26 @@
+config:
+    target: "http://localhost:3000/"
+    ensure:
+      maxErrorRate: 1
+    socketio:
+      transports: ["websocket"]
+    processor: "./mock.js"
+    phases:
+      - duration: 1
+        arrivalRate: 1
+        arrivalCount: 200
+        name: "Max Load !"
+scenarios:
+    - engine: "socketio"
+      flow:
+        - function: "getChatData"
+        - emit:
+            channel: "chat message"
+            data: "{{ name }} has joined"
+        - emit:
+            channel: "chat message"
+            data: "{{ name }} : {{ greeting }}"
+        - emit:
+            channel: "chat message"
+            data: "{{ name }} : {{ goodbye }}"
+        - think: 600
