@@ -19,8 +19,15 @@ io.on(eventName.ioConnection, (socket)=>{
     socket.on(eventName.ioChat, (msg)=>{
         console.log('[IO RECV] ' + msg);
         if (msg.slice(0,4) == 'SERV') {
-            let newStr = msg.slice(4);
-            tcp.write(newStr);
+            let newStr = msg.slice(10);
+
+            let b_len = Buffer.byteLength(newStr);
+			let buffer = Buffer.alloc(b_len + 2);
+			buffer.writeUInt16BE(b_len);
+			buffer.write(newStr, 2);
+            // writeMessage(socket, buffer);
+            /* 74=A,86=MP,103=I,126=0,33=1,0= ,122=0001,22=G965B,33=0,22=0000011,0= , */
+            tcp.write(buffer);
         } else {
             sendIOMsg(io, eventName.ioChat, msg);
         }
@@ -31,7 +38,7 @@ io.on(eventName.ioConnection, (socket)=>{
     /* --> use .once() for react only once of this event
     OR  io.sockets.setMaxListeners(20); --> if set 0 will disable memory leak feature */
     socket.once(eventName.ioInit, (data) => {
-        let tmp = marketInitData[100];
+        let tmp = marketInitData;
         console.log('[IO RECV] initial data..', tmp);
         sendIOMsg(socket, 'init client', tmp);
         /* let buf = Buffer.alloc(4096);
@@ -70,12 +77,5 @@ io.on(eventName.ioConnection, (socket)=>{
 function sendIOMsg(who, event, data) {
     who.emit(event, data);
 }
-websocket.sendIOMsg = sendIOMsg;
-
-/* API */
-websocket.sendNews = ()=>{
-    io.sockets.emit('chat message', {msg: 'Response from Nodejs'});
-}
-
 
 module.exports = websocket;

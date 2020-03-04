@@ -5,18 +5,18 @@ require('../lib/console');
 global.marketInitData = [];
 
 /* Local Server */
-let Connection = {
+/* let Connection = {
     host: 'localhost',
     port: 3333,
     exclusive: true
-}
+} */
 
 /* Autumn Channel */
-/* let Connection = {
+let Connection = {
     host: '10.22.16.1',
     port: 50000,
     exclusive: true
-} */
+}
 
 module.exports = function(io) {
         var tcp;
@@ -26,14 +26,21 @@ module.exports = function(io) {
                 console.log('Connect to tcp server ', Connection.host, ':', Connection.port);
 
                 // Login
-                // let buf = Buffer.alloc(4096);
-                let buf = util.encodeTCP("74=A,86=LI,103=C,126=0,33=0,0= ,131=0001,22= ,144=e%Ee%Ee%Ee,145= ,143=N,0= ,");
-                console.log('[TCP SEND] ', buf.toString(), ' len[', buf.length,']');
-                tcp.write(buf);
+                let newStr = '';
+                /* let newStr = "74=A,86=LI,103=C,126=0,33=0,0= ,131=0001,22= ,144=e%Ee%Ee%Ee,145= ,143=N,0= ,"; */
+
+                let b_len = Buffer.byteLength(newStr);
+                let buffer = Buffer.alloc(b_len + 2);
+                buffer.writeUInt16BE(b_len);
+                buffer.write(newStr, 2);
+
+                console.log('[TCP SEND] ', buffer, ' len[', buffer.length,']');
+                tcp.write(buffer);
             });
         }
 
         tcp.on('data', b => {
+            /* console.log(b) TODO: make log to be debug level */
             console.log('[TCP RECV] ' + b.byteLength + '[' + b.toString() + ']')
             let bytes = b;
             let d = 2;                      // default number of bytes offset to read from each message
