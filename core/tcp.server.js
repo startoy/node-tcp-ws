@@ -5,18 +5,18 @@ require('../lib/console');
 global.marketInitData = [];
 
 /* Local Server */
-/* let Connection = {
+ let Connection = {
     host: 'localhost',
     port: 3333,
     exclusive: true
-} */
+} 
 
 /* Autumn Channel */
-let Connection = {
+/*let Connection = {
     host: '10.22.16.1',
     port: 50000,
     exclusive: true
-}
+}*/
 
 module.exports = function(io) {
         var tcp;
