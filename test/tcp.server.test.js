@@ -4,12 +4,11 @@
 
 /* const Buffer = require('buffer'); */
 const net = require('net');
-let log = console;
 require('../lib/console')();
 const server = net.createServer();
 
 //emitted when server closes ...not emitted until all connections closes.
-server.on('close',function(){
+server.on('close',function() {
 	console.log('Server closed !');
   });
 
@@ -31,6 +30,7 @@ server.on('connection', function(socket) {
 		var laddr = socket.localAddress;
 		console.log('Server is listening at LOCAL port ' + lport);
 		console.log('Server LOCAL ip ' + laddr);
+		
 	}
 
 		console.log('------------remote client info --------------');
@@ -113,11 +113,10 @@ server.on('connection', function(socket) {
 server.on('error', onError);
 server.on('listening', onListening);
 
-server.maxConnections = 3;
+server.maxConnections = 1;
 server.listen(3333, 'localhost');
 
 var islistening = server.listening;
-
 if (islistening) {
 	console.log('Server is listening');
 } else {
@@ -133,6 +132,8 @@ function onListening() {
 	var port = address.port;
 	var family = address.family;
 	var ipaddr = address.address;
+	var maxConn = server.maxConnections;
+	console.log('Server max connections', maxConn);
 	console.log('Server is listening at port ' + port);
 	console.log('Server ip ' + ipaddr);
 	console.log('Server is IP4/IP6 : ' + family);

@@ -8,13 +8,19 @@ websocket.io = io;
 
 const eventName = require('../global').eventName;
 
-io.on(eventName.ioConnection, (socket)=>{
+io.on(eventName.ioConnection, (socket)=> {
     
-    console.log('[WebSOCK] client connected (current:' + socket.client.conn.server.clientsCount + ')');
+    console.log('[WebSOCK] client connected2 (current:' + io.engine.clientsCount + ')');
     
     socket.on(eventName.ioDisconnect, ()=>{
         console.log('[WebSOCK]client disconnected (current:' + socket.client.conn.server.clientsCount + ')');
     });
+    
+    if (io.engine.clientsCount > 2) {
+        socket.emit('err', { message: 'reach the limit of connections' });
+        socket.disconnect();
+        console.log('Disconnected...');
+    }
     
     var local_tcp;
     socket.on(eventName.ioChat, (msg)=>{

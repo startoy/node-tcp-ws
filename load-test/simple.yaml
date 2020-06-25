@@ -8,7 +8,7 @@ config:
     phases:
       - duration: 1
         arrivalRate: 1
-        arrivalCount: 200
+        arrivalCount: 500
         name: "Max Load !"
 scenarios:
     - engine: "socketio"
@@ -23,4 +23,4 @@ scenarios:
         - emit:
             channel: "chat message"
             data: "{{ name }} : {{ goodbye }}"
-        - think: 600
+        - think: 10 # do nothing for 5 seconds, then disconnect
