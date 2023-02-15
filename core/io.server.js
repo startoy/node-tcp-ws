@@ -33,7 +33,6 @@ io.on(eventName.ioConnection, (socket)=> {
             buffer.writeUInt16BE(b_len);
             buffer.write(newStr, 2);
             // writeMessage(socket, buffer);
-            /* 74=A,86=MP,103=I,126=0,33=1,0= ,122=0001,22=G965B,33=0,22=0000011,0= , */
             tcp.write(buffer);
         } else {
             sendIOMsg(io, eventName.ioChat, msg);
