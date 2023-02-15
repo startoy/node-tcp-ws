@@ -1,4 +1,4 @@
-# Goldspot Web Service
+# XXXX Web Service
   - Implement server back end with Node.js
   - Main dependencies module 
     - express.js
