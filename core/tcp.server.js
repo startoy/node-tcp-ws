@@ -11,13 +11,6 @@ global.marketInitData = [];
     exclusive: true
 } 
 
-/* Autumn Channel */
-/*let Connection = {
-    host: '10.22.16.1',
-    port: 50000,
-    exclusive: true
-}*/
-
 module.exports = function(io) {
         var tcp;
         if (!tcp) {
@@ -27,7 +20,6 @@ module.exports = function(io) {
 
                 // Login
                 let newStr = '';
-                /* let newStr = "74=A,86=LI,103=C,126=0,33=0,0= ,131=0001,22= ,144=e%Ee%Ee%Ee,145= ,143=N,0= ,"; */
 
                 let b_len = Buffer.byteLength(newStr);
                 let buffer = Buffer.alloc(b_len + 2);
