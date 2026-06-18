@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "artillery": "1.6.0-29",
+    "artillery": "1.7.9",
     "faker": "4.1.0",
     "nodemon": "2.0.2"
   },
