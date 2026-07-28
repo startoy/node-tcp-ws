@@ -19,7 +19,7 @@
     "nodemon": "2.0.2"
   },
   "dependencies": {
-    "express": "4.17.3",
+    "express": "4.22.2",
     "socket.io": "2.3.0"
   }
 }
