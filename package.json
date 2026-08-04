@@ -14,12 +14,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "artillery": "1.6.0-29",
+    "artillery": "2.0.33",
     "faker": "4.1.0",
     "nodemon": "2.0.2"
   },
   "dependencies": {
     "express": "4.17.3",
-    "socket.io": "2.3.0"
+    "socket.io": "4.8.3"
   }
 }
